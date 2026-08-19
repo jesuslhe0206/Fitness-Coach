@@ -1,4 +1,4 @@
-const CACHE='fitness-coach-v4';
+const CACHE='fitness-coach-v5';
 const CORE=['/','/index.html','/manifest.webmanifest','/exercise-images-patch.js'];
 
 self.addEventListener('install',e=>{
