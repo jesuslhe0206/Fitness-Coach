@@ -41,11 +41,11 @@ const EXERCISE_IMAGES={
   "Tríceps::Patada de tríceps":"/ejercicios/triceps/patada-de-triceps.png",
   "Tríceps::Rompecráneos (skull crushers)":"/ejercicios/triceps/rompecraneos.png",
 
-  "Abdomen/Core::Plancha frontal":"/ejercicios/abdomen-core/plancha-frontal.png",
-  "Abdomen/Core::Elevación de piernas":"/ejercicios/abdomen-core/elevacion-de-piernas.png",
-  "Abdomen/Core::Crunch abdominal":"/ejercicios/abdomen-core/crunch-abdominal.png",
-  "Abdomen/Core::Plancha lateral":"/ejercicios/abdomen-core/plancha-lateral.png",
-  "Abdomen/Core::Russian twist":"/ejercicios/abdomen-core/russian-twist.png",
+  "Abdomen / Core::Plancha frontal":"/ejercicios/abdomen-core/plancha-frontal.png",
+  "Abdomen / Core::Elevación de piernas":"/ejercicios/abdomen-core/elevacion-de-piernas.png",
+  "Abdomen / Core::Crunch abdominal":"/ejercicios/abdomen-core/crunch-abdominal.png",
+  "Abdomen / Core::Plancha lateral":"/ejercicios/abdomen-core/plancha-lateral.png",
+  "Abdomen / Core::Russian twist":"/ejercicios/abdomen-core/russian-twist.png",
 
   "Trapecio::Encogimientos con barra":"/ejercicios/trapecio/encogimientos-con-barra.png",
   "Trapecio::Encogimientos con mancuernas":"/ejercicios/trapecio/encogimientos-con-mancuernas.png",
