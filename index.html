@@ -324,13 +324,106 @@ function csvEscape(v){
   return s;
 }
 
+function formatExerciseCell(ex){
+  const parts=[];
+  if(ex.load) parts.push(`Carga: ${ex.load}`);
+  if(ex.sets) parts.push(`Series: ${ex.sets}`);
+  if(ex.reps) parts.push(`Reps: ${ex.reps}`);
+  if(ex.rir) parts.push(`RIR: ${ex.rir}`);
+  if(ex.pain) parts.push(`Dolor: ${ex.pain}/10`);
+  if(ex.comment) parts.push(`Comentario: ${ex.comment}`);
+  return parts.join(" | ");
+}
+
+function buildTransposedExport(records){
+  const sorted=[...records].sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  const dates=sorted.map(r=>r.fecha);
+
+  const standardFields=[
+    ["Peso corporal (kg)","peso_kg"],
+    ["Cintura (cm)","cintura_cm"],
+    ["Desayuno","alimentacion_desayuno"],
+    ["Colación / media mañana","alimentacion_colacion_manana"],
+    ["Comida / almuerzo","alimentacion_comida_almuerzo"],
+    ["Colación / media tarde","alimentacion_colacion_tarde"],
+    ["Cena","alimentacion_cena"],
+    ["Otros alimentos / snacks / postres","alimentacion_otros_alimentos"],
+    ["Bebidas","alimentacion_bebidas"],
+    ["Suplementos con calorías","alimentacion_suplementos_caloricos"],
+    ["Entrenamiento de fuerza","fuerza_si_no"],
+    ["Cardio","cardio_si_no"],
+    ["Cardio — modalidad","cardio_modalidad"],
+    ["Cardio — minutos","cardio_minutos"],
+    ["Cardio — FC promedio","cardio_fc_promedio"],
+    ["Cardio — intensidad percibida (1–10)","cardio_rpe_1_10"],
+    ["Cardio — molestias / comentario","cardio_molestias"],
+    ["Pasos","pasos"],
+    ["Sueño (horas)","sueno_horas"],
+    ["Calidad de sueño (1–10)","calidad_sueno_1_10"],
+    ["Energía al despertar (1–10)","energia_1_10"],
+    ["Fatiga física (1–10)","fatiga_fisica_1_10"],
+    ["Fatiga mental (1–10)","fatiga_mental_1_10"],
+    ["VFC / HRV (ms)","vfc_ms"],
+    ["FC reposo (lpm)","fc_reposo"],
+    ["Sleep Score","sleep_score"],
+    ["Body Battery","body_battery"],
+    ["Muñeca derecha — dolor (0–10)","muneca_dolor_0_10"],
+    ["Muñeca — ejercicio / situación","muneca_ejercicio_situacion"],
+    ["¿La muñequera ayudó?","munequera_ayudo"],
+    ["Pie izquierdo — dolor (0–10)","pie_dolor_0_10"],
+    ["Pie — tolerancia","pie_tolerancia"],
+    ["Empeoramiento al día siguiente","empeoramiento_dia_siguiente"],
+    ["PA lectura 1 — sistólica","pa_lectura1_sistolica"],
+    ["PA lectura 1 — diastólica","pa_lectura1_diastolica"],
+    ["PA lectura 2 — sistólica","pa_lectura2_sistolica"],
+    ["PA lectura 2 — diastólica","pa_lectura2_diastolica"],
+    ["Notas del día","notas"]
+  ];
+
+  const rows=[["Campo / ejercicio",...dates]];
+
+  standardFields.forEach(([label,key])=>{
+    rows.push([label,...sorted.map(r=>r[key]??"")]);
+  });
+
+  const exerciseNames=[];
+  const seen=new Set();
+
+  sorted.forEach(r=>{
+    (r.fuerza_ejercicios||[]).forEach(ex=>{
+      const name=(ex.name||"").trim();
+      if(name && !seen.has(name.toLowerCase())){
+        seen.add(name.toLowerCase());
+        exerciseNames.push(name);
+      }
+    });
+  });
+
+  if(exerciseNames.length){
+    rows.push(["— EJERCICIOS DE FUERZA —",...dates.map(()=> "")]);
+
+    exerciseNames.forEach(name=>{
+      const cells=sorted.map(r=>{
+        const ex=(r.fuerza_ejercicios||[]).find(
+          e=>(e.name||"").trim().toLowerCase()===name.toLowerCase()
+        );
+        return ex ? formatExerciseCell(ex) : "";
+      });
+      rows.push([name,...cells]);
+    });
+  }
+
+  return rows;
+}
+
 $("export_csv").addEventListener("click",()=>{
   const records=getRecords();
   if(!records.length){showStatus("No hay registros para exportar.",false);return}
-  const headers=Object.keys(records[0]);
-  const rows=[headers.join(",")];
-  records.forEach(r=>rows.push(headers.map(h=>csvEscape(r[h])).join(",")));
-  const blob=new Blob(["\ufeff"+rows.join("\r\n")],{type:"text/csv;charset=utf-8;"});
+
+  const rows=buildTransposedExport(records);
+  const csv=rows.map(row=>row.map(csvEscape).join(",")).join("\r\n");
+
+  const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});
   const url=URL.createObjectURL(blob);
   const a=document.createElement("a");
   a.href=url;
