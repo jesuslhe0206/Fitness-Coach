@@ -1,5 +1,5 @@
-const CACHE='fitness-coach-v5';
-const CORE=['/','/index.html','/manifest.webmanifest','/exercise-images-patch.js'];
+const CACHE='fitness-coach-v6';
+const CORE=['/','/index.html','/manifest.webmanifest','/exercise-images-patch.js','/ui-enhancements.js'];
 
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)));
@@ -21,9 +21,13 @@ self.addEventListener('fetch',e=>{
       try{
         const r=await fetch(e.request);
         const text=await r.text();
-        const patched=text.includes('/exercise-images-patch.js')
-          ? text
-          : text.replace('</body>','<script src="/exercise-images-patch.js"></script></body>');
+        let patched=text;
+        if(!patched.includes('/exercise-images-patch.js')){
+          patched=patched.replace('</body>','<script src="/exercise-images-patch.js"></script></body>');
+        }
+        if(!patched.includes('/ui-enhancements.js')){
+          patched=patched.replace('</body>','<script src="/ui-enhancements.js"></script></body>');
+        }
         const headers=new Headers(r.headers);
         headers.set('content-type','text/html; charset=utf-8');
         const out=new Response(patched,{status:r.status,statusText:r.statusText,headers});
