@@ -70,6 +70,39 @@ $("date").value=todayLocal();
 function val(id){return $(id).value.trim()}function checked(id){return $(id).checked}
 function escAttr(s){return String(s).replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;")}
 
+function insertHintAfter(el,text){if(!el||!text)return;const hint=document.createElement("div");hint.className="hint";hint.textContent=text;el.insertAdjacentElement("afterend",hint)}
+const FIELD_HINTS={
+  other_food:"Incluye snacks, postres, antojos, degustaciones y comidas fuera de casa.",
+  drinks:"Incluye agua, café, té, refrescos, jugos, alcohol y cualquier bebida con calorías.",
+  caloric_supplements:"Anota suplementos o productos que aporten energía: gomitas, aceites, bebidas deportivas, etc.",
+  cardio_mode:"Indica el tipo de actividad: caminata, bicicleta, elíptica, remo, carrera, etc.",
+  cardio_minutes:"Anota la duración total efectiva de la sesión.",
+  cardio_hr:"Usa la frecuencia cardiaca promedio reportada por Garmin si está disponible.",
+  cardio_rpe:"1 = esfuerzo muy ligero; 10 = esfuerzo máximo. Evalúa la sesión completa.",
+  cardio_discomfort:"Describe dolor, fatiga inusual, falta de aire o cualquier molestia relevante.",
+  sleep_hours:"Horas totales dormidas; usa el dato de Garmin si lo consideras confiable.",
+  sleep_quality:"1 = muy mala; 10 = excelente. Evalúa qué tan reparador sentiste el sueño.",
+  energy:"1 = agotado; 10 = excelente energía al levantarte.",
+  physical_fatigue:"1 = nada fatigado; 10 = fatiga física extrema.",
+  mental_fatigue:"1 = mente fresca; 10 = fatiga mental extrema.",
+  hrv:"Registra la VFC/HRV en milisegundos según Garmin, idealmente siempre la misma métrica.",
+  resting_hr:"Frecuencia cardiaca en reposo reportada por Garmin, en latidos por minuto.",
+  sleep_score:"Puntaje de sueño de Garmin de 0 a 100.",
+  body_battery:"Valor de Body Battery de Garmin de 0 a 100; usa el valor de referencia que definamos de forma consistente.",
+  wrist_pain:"0 = sin dolor; 10 = peor dolor imaginable. Registra el nivel más representativo del día.",
+  foot_pain:"0 = sin dolor; 10 = peor dolor imaginable. Registra el nivel más representativo del día.",
+  wrist_trigger:"Si hubo molestia, anota qué ejercicio, agarre, movimiento o actividad la provocó.",
+  wrist_support:"Selecciona si la muñequera redujo la molestia durante la actividad; usa “No aplica” si no la utilizaste.",
+  foot_tolerance:"Describe qué actividad y cuánto tiempo toleró el pie sin aumentar los síntomas.",
+  next_day_worsening:"Anota si los síntomas aumentaron al día siguiente y qué actividad pudo relacionarse.",
+  bp1_sys:"Primer valor sistólico en mmHg (el número superior de la lectura).",
+  bp1_dia:"Primer valor diastólico en mmHg (el número inferior de la lectura).",
+  bp2_sys:"Segunda lectura sistólica en mmHg, tomada después del intervalo habitual.",
+  bp2_dia:"Segunda lectura diastólica en mmHg, tomada junto con la segunda sistólica.",
+  notes:"Usa este espacio para eventos que puedan afectar los datos: enfermedad, estrés, viajes, alcohol, cambio de horario, etc."
+};
+Object.entries(FIELD_HINTS).forEach(([id,text])=>insertHintAfter($(id),text));
+
 const FOOD_FIELD_IDS=["breakfast","midmorning","lunch","afternoon_snack","dinner","other_food","drinks","caloric_supplements"];
 function getFrequentFoods(){try{const items=JSON.parse(localStorage.getItem(FREQUENT_FOODS_KEY)||"[]");return Array.isArray(items)?items:[]}catch{return []}}
 function saveFrequentFoods(items){localStorage.setItem(FREQUENT_FOODS_KEY,JSON.stringify(items));refreshFrequentFoodUI()}
@@ -88,7 +121,19 @@ function refreshFrequentFoodUI(){
 }
 FOOD_FIELD_IDS.forEach(id=>addFoodTools($(id)));refreshFrequentFoodUI();
 
-function addExercise(data={}){const box=document.createElement("div");box.className="exercise";box.innerHTML=`<div class="exercise-head"><strong>Ejercicio</strong><button type="button" class="mini remove-exercise">Eliminar</button></div><div class="grid"><div class="full"><label>Nombre</label><input class="ex_name" type="text" value="${escAttr(data.name||"")}"></div><div><label>Carga</label><input class="ex_load" type="text" value="${escAttr(data.load||"")}" placeholder="Ej. 15 kg/mancuerna"></div><div><label>Series</label><input class="ex_sets" type="number" min="0" step="1" value="${escAttr(data.sets||"")}"></div><div class="full"><label>Reps por serie</label><input class="ex_reps" type="text" value="${escAttr(data.reps||"")}" placeholder="Ej. 12, 11, 10, 9"></div><div><label>RIR estimado</label><input class="ex_rir" type="text" value="${escAttr(data.rir||"")}" placeholder="Ej. 3, 2, 2, 1"></div><div><label>Dolor/molestia (0–10)</label><input class="ex_pain" type="number" min="0" max="10" step="1" value="${escAttr(data.pain||"")}"></div><div class="full"><label>Comentario</label><input class="ex_comment" type="text" value="${escAttr(data.comment||"")}"></div></div>`;box.querySelector(".remove-exercise").addEventListener("click",()=>box.remove());$("exercises").appendChild(box)}
+function addExerciseHints(box){
+  const hints={
+    ex_name:"Usa siempre el mismo nombre para el mismo ejercicio; así podremos comparar su progresión entre días.",
+    ex_load:"Anota la carga total o por implemento e incluye la unidad, por ejemplo: 20 kg total o 15 kg/mancuerna.",
+    ex_sets:"Número de series efectivamente realizadas.",
+    ex_reps:"Escribe las repeticiones de cada serie en orden, por ejemplo: 12, 11, 10, 9.",
+    ex_rir:"Repeticiones en reserva por serie: 0 = fallo; 1 = quedaba 1 repetición; 2 = quedaban 2, etc.",
+    ex_pain:"0 = sin molestia; 10 = dolor máximo. Evalúa la molestia provocada por ese ejercicio.",
+    ex_comment:"Anota cambios de técnica, agarre, rango de movimiento, tempo o cualquier detalle relevante."
+  };
+  Object.entries(hints).forEach(([cls,text])=>insertHintAfter(box.querySelector("."+cls),text));
+}
+function addExercise(data={}){const box=document.createElement("div");box.className="exercise";box.innerHTML=`<div class="exercise-head"><strong>Ejercicio</strong><button type="button" class="mini remove-exercise">Eliminar</button></div><div class="grid"><div class="full"><label>Nombre</label><input class="ex_name" type="text" value="${escAttr(data.name||"")}"></div><div><label>Carga</label><input class="ex_load" type="text" value="${escAttr(data.load||"")}" placeholder="Ej. 15 kg/mancuerna"></div><div><label>Series</label><input class="ex_sets" type="number" min="0" step="1" value="${escAttr(data.sets||"")}"></div><div class="full"><label>Reps por serie</label><input class="ex_reps" type="text" value="${escAttr(data.reps||"")}" placeholder="Ej. 12, 11, 10, 9"></div><div><label>RIR estimado</label><input class="ex_rir" type="text" value="${escAttr(data.rir||"")}" placeholder="Ej. 3, 2, 2, 1"></div><div><label>Dolor/molestia (0–10)</label><input class="ex_pain" type="number" min="0" max="10" step="1" value="${escAttr(data.pain||"")}"></div><div class="full"><label>Comentario</label><input class="ex_comment" type="text" value="${escAttr(data.comment||"")}"></div></div>`;box.querySelector(".remove-exercise").addEventListener("click",()=>box.remove());$("exercises").appendChild(box);addExerciseHints(box)}
 $("add_exercise").addEventListener("click",()=>addExercise());
 function getExercises(){return [...document.querySelectorAll(".exercise")].map(e=>({name:e.querySelector(".ex_name").value.trim(),load:e.querySelector(".ex_load").value.trim(),sets:e.querySelector(".ex_sets").value.trim(),reps:e.querySelector(".ex_reps").value.trim(),rir:e.querySelector(".ex_rir").value.trim(),pain:e.querySelector(".ex_pain").value.trim(),comment:e.querySelector(".ex_comment").value.trim()})).filter(x=>Object.values(x).some(Boolean))}
 function getRecords(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]")}catch{return []}}
