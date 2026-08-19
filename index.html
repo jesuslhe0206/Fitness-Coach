@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>Protocolo de Calibración — Captura</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --text:#17191c; --muted:#6b7280;
+  --line:#dfe3e8; --accent:#111827; --danger:#9b1c1c; --ok:#166534;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+.wrap{max-width:760px;margin:0 auto;padding:18px 14px 80px}
+h1{font-size:24px;margin:4px 0 6px}
+.sub{color:var(--muted);font-size:14px;margin-bottom:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
+.card h2{font-size:17px;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.full{grid-column:1 / -1}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
+input,select,textarea,button{font:inherit}
+input,select,textarea{
+  width:100%;border:1px solid #cfd5dc;border-radius:10px;padding:11px 12px;background:#fff
+}
+textarea{min-height:82px;resize:vertical}
+input[type="checkbox"]{width:auto;transform:scale(1.15);margin-right:8px}
+.check{display:flex;align-items:center;font-weight:600;font-size:14px;margin:4px 0 12px}
+.hint{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.45}
+.actions{display:grid;gap:10px;margin-top:16px}
+button{border:0;border-radius:11px;padding:12px 14px;font-weight:700;cursor:pointer}
+.primary{background:var(--accent);color:#fff}
+.secondary{background:#e9edf2;color:#111827}
+.danger{background:#fff;color:var(--danger);border:1px solid #e7bcbc}
+.exercise{border:1px dashed #cbd5e1;border-radius:12px;padding:12px;margin:10px 0}
+.exercise-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.exercise-head strong{font-size:14px}
+.mini{padding:7px 9px;font-size:12px;background:#f0f2f5}
+.status{margin:12px 0 0;padding:10px 12px;border-radius:10px;font-size:13px;display:none}
+.status.ok{display:block;background:#ecfdf3;color:var(--ok);border:1px solid #bbf7d0}
+.status.err{display:block;background:#fef2f2;color:var(--danger);border:1px solid #fecaca}
+.saved{font-size:13px;color:var(--muted);margin-top:10px}
+.footer-note{font-size:12px;color:var(--muted);margin-top:14px;line-height:1.45}
+details{border-top:1px solid transparent}
+summary{cursor:pointer;font-weight:700;padding:8px 0;list-style-position:outside}
+summary::marker{font-size:1.1em}
+@media (max-width:620px){
+  .grid{grid-template-columns:1fr}
+  .full{grid-column:auto}
+  .wrap{padding-left:10px;padding-right:10px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Protocolo de Calibración — 14 días</h1>
+  <div class="sub">Formulario mínimo de captura. Los datos se guardan en este navegador y pueden exportarse a CSV.</div>
+
+  <form id="form">
+    <section class="card">
+      <h2>1. Peso corporal</h2>
+      <div class="grid">
+        <div><label for="date">Fecha</label><input id="date" type="date" required></div>
+        <div><label for="weight">Peso corporal (kg)</label><input id="weight" type="number" step="0.01" min="0" inputmode="decimal"></div>
+      </div>
+      <div class="hint">Al despertar, después de ir al baño, antes de comer o beber y bajo condiciones similares.</div>
+    </section>
+
+    <section class="card">
+      <h2>2. Cintura</h2>
+      <div><label for="waist">Cintura (cm) — si corresponde ese día</label><input id="waist" type="number" step="0.1" min="0" inputmode="decimal"></div>
+      <div class="hint">Idealmente 1 vez por semana, bajo las mismas condiciones y en el mismo punto anatómico.</div>
+    </section>
+
+    <section class="card">
+      <h2>3. Alimentación</h2>
+      <div class="hint" style="margin-bottom:12px">Describe lo que consumiste con lenguaje natural. Incluye cantidades aproximadas, preparación, aceites, aderezos, bebidas, snacks y marcas cuando sean relevantes.</div>
+      <div class="grid">
+        <div class="full"><label for="breakfast">Desayuno</label><textarea id="breakfast" placeholder="Ej. Batido con agua, una medida de proteína, frutos rojos, avena y nueces."></textarea></div>
+        <div class="full"><label for="midmorning">Colación / media mañana</label><textarea id="midmorning"></textarea></div>
+        <div class="full"><label for="lunch">Comida / almuerzo</label><textarea id="lunch" placeholder="Ej. Dos porciones de pechuga de pollo asada acompañadas de un puño de verduras asadas."></textarea></div>
+        <div class="full"><label for="afternoon_snack">Colación / media tarde</label><textarea id="afternoon_snack"></textarea></div>
+        <div class="full"><label for="dinner">Cena</label><textarea id="dinner"></textarea></div>
+        <div class="full"><label for="other_food">Otros alimentos, snacks, postres o comidas fuera</label><textarea id="other_food"></textarea></div>
+        <div class="full"><label for="drinks">Bebidas</label><textarea id="drinks"></textarea></div>
+        <div class="full"><label for="caloric_supplements">Suplementos con calorías / otros consumos relevantes</label><textarea id="caloric_supplements"></textarea></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>4. Entrenamiento de fuerza</h2>
+      <details id="strength_details">
+        <summary>Registrar entrenamiento de fuerza</summary>
+        <div style="margin-top:12px">
+          <label class="check"><input id="strength_done" type="checkbox">Realicé entrenamiento de fuerza</label>
+          <div id="exercises"></div>
+          <button type="button" class="secondary" id="add_exercise">+ Añadir ejercicio</button>
+        </div>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>5. Cardio</h2>
+      <details id="cardio_details">
+        <summary>Registrar cardio</summary>
+        <div style="margin-top:12px">
+          <label class="check"><input id="cardio_done" type="checkbox">Realicé cardio</label>
+          <div class="grid">
+            <div><label for="cardio_mode">Modalidad</label><input id="cardio_mode" type="text" placeholder="Bici, caminata, elíptica…"></div>
+            <div><label for="cardio_minutes">Minutos</label><input id="cardio_minutes" type="number" min="0" step="1" inputmode="numeric"></div>
+            <div><label for="cardio_hr">FC promedio</label><input id="cardio_hr" type="number" min="0" step="1" inputmode="numeric"></div>
+            <div><label for="cardio_rpe">Intensidad percibida (1–10)</label><input id="cardio_rpe" type="number" min="1" max="10" step="1" inputmode="numeric"></div>
+            <div class="full"><label for="cardio_discomfort">Molestias / comentario</label><textarea id="cardio_discomfort"></textarea></div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>6. Pasos</h2>
+      <div><label for="steps">Pasos del día</label><input id="steps" type="number" step="1" min="0" inputmode="numeric"></div>
+      <div class="hint">Dato registrado por Garmin.</div>
+    </section>
+
+    <section class="card">
+      <h2>7. Sueño y recuperación</h2>
+      <div class="grid">
+        <div><label for="sleep_hours">Sueño (horas)</label><input id="sleep_hours" type="number" min="0" max="24" step="0.1" inputmode="decimal"></div>
+        <div><label for="sleep_quality">Calidad de sueño (1–10)</label><input id="sleep_quality" type="number" min="1" max="10" step="1" inputmode="numeric"></div>
+        <div><label for="energy">Energía al despertar (1–10)</label><input id="energy" type="number" min="1" max="10" step="1" inputmode="numeric"></div>
+        <div><label for="physical_fatigue">Fatiga física (1–10)</label><input id="physical_fatigue" type="number" min="1" max="10" step="1" inputmode="numeric"></div>
+        <div><label for="mental_fatigue">Fatiga mental (1–10)</label><input id="mental_fatigue" type="number" min="1" max="10" step="1" inputmode="numeric"></div>
+        <div><label for="hrv">VFC / HRV (ms)</label><input id="hrv" type="number" min="0" step="0.1" inputmode="decimal"></div>
+        <div><label for="resting_hr">FC reposo (lpm)</label><input id="resting_hr" type="number" min="0" step="1" inputmode="numeric"></div>
+        <div><label for="sleep_score">Sleep Score</label><input id="sleep_score" type="number" min="0" max="100" step="1" inputmode="numeric"></div>
+        <div><label for="body_battery">Body Battery</label><input id="body_battery" type="number" min="0" max="100" step="1" inputmode="numeric"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>8. Dolor y lesiones</h2>
+      <div class="grid">
+        <div><label for="wrist_pain">Muñeca derecha — dolor (0–10)</label><input id="wrist_pain" type="number" min="0" max="10" step="1" inputmode="numeric"></div>
+        <div><label for="foot_pain">Pie izquierdo — dolor (0–10)</label><input id="foot_pain" type="number" min="0" max="10" step="1" inputmode="numeric"></div>
+        <div class="full"><label for="wrist_trigger">Ejercicio / situación que molestó la muñeca</label><input id="wrist_trigger" type="text"></div>
+        <div><label for="wrist_support">¿La muñequera ayudó?</label><select id="wrist_support"><option value=""></option><option>Sí</option><option>No</option><option>No aplica</option></select></div>
+        <div><label for="foot_tolerance">Tolerancia del pie</label><input id="foot_tolerance" type="text" placeholder="Ej. caminata 30 min sin empeorar"></div>
+        <div class="full"><label for="next_day_worsening">Empeoramiento al día siguiente / comentario</label><textarea id="next_day_worsening"></textarea></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>9. Presión arterial</h2>
+      <div class="grid">
+        <div><label for="bp1_sys">Lectura 1 — sistólica</label><input id="bp1_sys" type="number" min="0" step="1" inputmode="numeric"></div>
+        <div><label for="bp1_dia">Lectura 1 — diastólica</label><input id="bp1_dia" type="number" min="0" step="1" inputmode="numeric"></div>
+        <div><label for="bp2_sys">Lectura 2 — sistólica</label><input id="bp2_sys" type="number" min="0" step="1" inputmode="numeric"></div>
+        <div><label for="bp2_dia">Lectura 2 — diastólica</label><input id="bp2_dia" type="number" min="0" step="1" inputmode="numeric"></div>
+      </div>
+      <div class="hint">Registrar los días que correspondan según el protocolo.</div>
+    </section>
+
+    <section class="card">
+      <h2>Notas del día</h2>
+      <label for="notes">Comentario general</label>
+      <textarea id="notes"></textarea>
+    </section>
+
+    <div class="actions">
+      <button class="primary" type="submit">Guardar registro</button>
+      <button class="secondary" type="button" id="export_csv">Exportar todos los registros a CSV</button>
+      <button class="secondary" type="button" id="clear_form">Limpiar formulario</button>
+      <button class="danger" type="button" id="delete_all">Eliminar todos los registros guardados</button>
+    </div>
+
+    <div id="status" class="status"></div>
+    <div id="saved_count" class="saved"></div>
+    <div class="footer-note">
+      Los datos se guardan localmente en este navegador. En una versión futura con base de datos podríamos sincronizarlos entre dispositivos.
+    </div>
+  </form>
+</div>
+
+<script>
+const STORAGE_KEY="calibracion14_registros_v2";
+const $=id=>document.getElementById(id);
+
+function todayLocal(){
+  const d=new Date();
+  const off=d.getTimezoneOffset();
+  return new Date(d.getTime()-off*60000).toISOString().slice(0,10);
+}
+$("date").value=todayLocal();
+
+function val(id){return $(id).value.trim()}
+function checked(id){return $(id).checked}
+
+function escAttr(s){
+  return String(s).replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
+
+function addExercise(data={}){
+  const box=document.createElement("div");
+  box.className="exercise";
+  box.innerHTML=`
+    <div class="exercise-head">
+      <strong>Ejercicio</strong>
+      <button type="button" class="mini remove-exercise">Eliminar</button>
+    </div>
+    <div class="grid">
+      <div class="full"><label>Nombre</label><input class="ex_name" type="text" value="${escAttr(data.name||"")}"></div>
+      <div><label>Carga</label><input class="ex_load" type="text" value="${escAttr(data.load||"")}" placeholder="Ej. 15 kg/mancuerna"></div>
+      <div><label>Series</label><input class="ex_sets" type="number" min="0" step="1" value="${escAttr(data.sets||"")}"></div>
+      <div class="full"><label>Reps por serie</label><input class="ex_reps" type="text" value="${escAttr(data.reps||"")}" placeholder="Ej. 12, 11, 10, 9"></div>
+      <div><label>RIR estimado</label><input class="ex_rir" type="text" value="${escAttr(data.rir||"")}" placeholder="Ej. 3, 2, 2, 1"></div>
+      <div><label>Dolor/molestia (0–10)</label><input class="ex_pain" type="number" min="0" max="10" step="1" value="${escAttr(data.pain||"")}"></div>
+      <div class="full"><label>Comentario</label><input class="ex_comment" type="text" value="${escAttr(data.comment||"")}"></div>
+    </div>`;
+  box.querySelector(".remove-exercise").addEventListener("click",()=>box.remove());
+  $("exercises").appendChild(box);
+}
+$("add_exercise").addEventListener("click",()=>addExercise());
+
+function getExercises(){
+  return [...document.querySelectorAll(".exercise")].map(e=>({
+    name:e.querySelector(".ex_name").value.trim(),
+    load:e.querySelector(".ex_load").value.trim(),
+    sets:e.querySelector(".ex_sets").value.trim(),
+    reps:e.querySelector(".ex_reps").value.trim(),
+    rir:e.querySelector(".ex_rir").value.trim(),
+    pain:e.querySelector(".ex_pain").value.trim(),
+    comment:e.querySelector(".ex_comment").value.trim()
+  })).filter(x=>Object.values(x).some(Boolean));
+}
+
+function getRecords(){
+  try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]")}
+  catch{return []}
+}
+function saveRecords(records){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(records));
+  updateCount();
+}
+function updateCount(){
+  $("saved_count").textContent=`Registros guardados en este navegador: ${getRecords().length}`;
+}
+updateCount();
+
+function showStatus(msg,ok=true){
+  const el=$("status");
+  el.textContent=msg;
+  el.className="status "+(ok?"ok":"err");
+  setTimeout(()=>el.className="status",3500);
+}
+
+function buildRecord(){
+  return {
+    fecha:val("date"),
+    peso_kg:val("weight"),
+    cintura_cm:val("waist"),
+    alimentacion_desayuno:val("breakfast"),
+    alimentacion_colacion_manana:val("midmorning"),
+    alimentacion_comida_almuerzo:val("lunch"),
+    alimentacion_colacion_tarde:val("afternoon_snack"),
+    alimentacion_cena:val("dinner"),
+    alimentacion_otros_alimentos:val("other_food"),
+    alimentacion_bebidas:val("drinks"),
+    alimentacion_suplementos_caloricos:val("caloric_supplements"),
+    fuerza_si_no:checked("strength_done")?"Sí":"No",
+    fuerza_ejercicios:getExercises(),
+    cardio_si_no:checked("cardio_done")?"Sí":"No",
+    cardio_modalidad:val("cardio_mode"),
+    cardio_minutos:val("cardio_minutes"),
+    cardio_fc_promedio:val("cardio_hr"),
+    cardio_rpe_1_10:val("cardio_rpe"),
+    cardio_molestias:val("cardio_discomfort"),
+    pasos:val("steps"),
+    sueno_horas:val("sleep_hours"),
+    calidad_sueno_1_10:val("sleep_quality"),
+    energia_1_10:val("energy"),
+    fatiga_fisica_1_10:val("physical_fatigue"),
+    fatiga_mental_1_10:val("mental_fatigue"),
+    vfc_ms:val("hrv"),
+    fc_reposo:val("resting_hr"),
+    sleep_score:val("sleep_score"),
+    body_battery:val("body_battery"),
+    muneca_dolor_0_10:val("wrist_pain"),
+    muneca_ejercicio_situacion:val("wrist_trigger"),
+    munequera_ayudo:val("wrist_support"),
+    pie_dolor_0_10:val("foot_pain"),
+    pie_tolerancia:val("foot_tolerance"),
+    empeoramiento_dia_siguiente:val("next_day_worsening"),
+    pa_lectura1_sistolica:val("bp1_sys"),
+    pa_lectura1_diastolica:val("bp1_dia"),
+    pa_lectura2_sistolica:val("bp2_sys"),
+    pa_lectura2_diastolica:val("bp2_dia"),
+    notas:val("notes")
+  };
+}
+
+$("form").addEventListener("submit",e=>{
+  e.preventDefault();
+  const record=buildRecord();
+  if(!record.fecha){showStatus("Selecciona una fecha.",false);return}
+  const records=getRecords();
+  const idx=records.findIndex(r=>r.fecha===record.fecha);
+  if(idx>=0){
+    if(!confirm("Ya existe un registro para esta fecha. ¿Quieres reemplazarlo?"))return;
+    records[idx]=record;
+  }else records.push(record);
+  records.sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  saveRecords(records);
+  showStatus("Registro guardado.");
+});
+
+function csvEscape(v){
+  if(v===null||v===undefined)return "";
+  let s=typeof v==="object"?JSON.stringify(v):String(v);
+  if(/[",\n\r]/.test(s))s='"'+s.replaceAll('"','""')+'"';
+  return s;
+}
+
+$("export_csv").addEventListener("click",()=>{
+  const records=getRecords();
+  if(!records.length){showStatus("No hay registros para exportar.",false);return}
+  const headers=Object.keys(records[0]);
+  const rows=[headers.join(",")];
+  records.forEach(r=>rows.push(headers.map(h=>csvEscape(r[h])).join(",")));
+  const blob=new Blob(["\ufeff"+rows.join("\r\n")],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=`calibracion_14_dias_${todayLocal()}.csv`;
+  document.body.appendChild(a);a.click();a.remove();
+  URL.revokeObjectURL(url);
+});
+
+$("clear_form").addEventListener("click",()=>{
+  if(!confirm("¿Limpiar los campos del formulario? Los registros guardados no se eliminarán."))return;
+  $("form").reset();
+  $("date").value=todayLocal();
+  $("exercises").innerHTML="";
+  $("strength_details").open=false;
+  $("cardio_details").open=false;
+  showStatus("Formulario limpio.");
+});
+
+$("delete_all").addEventListener("click",()=>{
+  if(!confirm("Esto eliminará TODOS los registros guardados en este navegador. ¿Continuar?"))return;
+  localStorage.removeItem(STORAGE_KEY);
+  updateCount();
+  showStatus("Todos los registros fueron eliminados.");
+});
+</script>
+</body>
+</html>
