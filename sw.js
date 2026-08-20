@@ -1,5 +1,5 @@
-const CACHE='fitness-coach-v11';
-const CORE=['/','/index.html','/manifest.webmanifest','/exercise-images-patch.js','/ui-enhancements.js','/food-enhancements.js','/sleep-enhancements.js','/cardio-enhancements.js'];
+const CACHE='fitness-coach-v12';
+const CORE=['/','/index.html','/manifest.webmanifest','/exercise-images-patch.js','/ui-enhancements.js','/food-enhancements.js','/sleep-enhancements.js','/cardio-enhancements.js','/section-status-enhancements.js'];
 
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)));
@@ -36,6 +36,9 @@ self.addEventListener('fetch',e=>{
         }
         if(!patched.includes('/cardio-enhancements.js')){
           patched=patched.replace('</body>','<script src="/cardio-enhancements.js"></script></body>');
+        }
+        if(!patched.includes('/section-status-enhancements.js')){
+          patched=patched.replace('</body>','<script src="/section-status-enhancements.js"></script></body>');
         }
         const headers=new Headers(r.headers);
         headers.set('content-type','text/html; charset=utf-8');
