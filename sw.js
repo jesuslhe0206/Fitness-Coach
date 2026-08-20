@@ -1,4 +1,4 @@
-const CACHE='fitness-coach-v10';
+const CACHE='fitness-coach-v11';
 const CORE=['/','/index.html','/manifest.webmanifest','/exercise-images-patch.js','/ui-enhancements.js','/food-enhancements.js','/sleep-enhancements.js','/cardio-enhancements.js'];
 
 self.addEventListener('install',e=>{
